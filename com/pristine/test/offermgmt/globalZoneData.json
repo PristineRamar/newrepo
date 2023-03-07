@@ -1,0 +1,27 @@
+[ {
+  "znNo" : "4",
+  "znId" : 2,
+  "mktAreaDscr" : null,
+  "splrNo" : null,
+  "prcGrpCd" : 0,
+  "bnrCd" : null,
+  "prcGrpDscr" : null,
+  "sysCd" : null,
+  "actualZoneNum" : null,
+  "zoneType" : "W",
+  "znName" : "ADV-ORLY",
+  "globalZn" : "N"
+}, {
+  "znNo" : "16",
+  "znId" : 3,
+  "mktAreaDscr" : null,
+  "splrNo" : null,
+  "prcGrpCd" : 0,
+  "bnrCd" : null,
+  "prcGrpDscr" : null,
+  "sysCd" : null,
+  "actualZoneNum" : null,
+  "zoneType" : "W",
+  "znName" : "ADV-ORLY-NAPA",
+  "globalZn" : "N"
+} ]

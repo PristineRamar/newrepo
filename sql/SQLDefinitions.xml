@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+ <comment>This query returns something extremely useful.
+ </comment>
+ 
+ <entry key="competitiveDataScheduleSQL">
+ Insert into	item_metric_summary_comp(item_metric_summary_comp_id, calendar_id,location_level_id,location_id,product_id,product_level_id,
+  sale_flag,reg_price,reg_multiple_pack,reg_multiple_price,sale_price,sale_multiple_pack,sale_multiple_price,  final_price)
+Select ITEM_METRIC_SUMMARY_COMP_SEQ.NextVal, calendar_id,location_level_id,location_id,product_id,product_level_id,
+  (case when sale_flag = 0 then 'N' else 'Y' end)sale_flag,reg_price,reg_multiple_pack,reg_multiple_price,sale_price,sale_multiple_pack,sale_multiple_price,(case
+  when
+  (sale_price = 0 )or (reg_price=0)
+  then
+  greatest(sale_price,reg_price)
+  else
+  least(sale_price,reg_price)
+  end) final_price
+ from 
+ (
+(SELECT avg(calendar_id)calendar_id,
+  5 location_level_id,
+    avg(location_id) location_id,
+  ret_lir_id as product_id,2 product_level_id, avg(s_flag) sale_flag, STATS_MODE(reg_price) reg_price, min(reg_multiple_pack) reg_multiple_pack,avg(reg_multiple_price) reg_multiple_price
+  ,STATS_MODE(sale_price) sale_price,min(sale_multiple_pack) sale_multiple_pack,avg(sale_multiple_price) sale_multiple_price  from
+(select calendar_id,
+  5 location_level_id,
+    schedule.comp_str_id location_id,
+  competitive_data.item_code as product_id,
+  ret_lir_id,
+  (case when sale_price > 0 then 1 else 0 end) s_flag,
+  reg_price ,
+  reg_m_pack reg_multiple_pack,
+  reg_m_price reg_multiple_price,
+  sale_price ,
+  sale_m_pack sale_multiple_pack,
+  sale_m_price sale_multiple_price
+  from competitive_data, schedule, retail_calendar, item_lookup
+  where competitive_data.schedule_id = schedule.schedule_id
+  and schedule.schedule_id = 5694
+  and schedule.start_date = retail_calendar.start_date
+  and retail_calendar.row_type ='W'
+  and competitive_data.item_code = item_lookup.item_code
+  and ret_lir_id is not null
+  )
+  group by ret_lir_id
+)  
+  UNION
+  
+ select calendar_id,
+  5 location_level_id,
+    schedule.comp_str_id location_id,
+  competitive_data.item_code as product_id,
+  1 product_level_id,
+  (case when sale_price > 0 then 1 else 0 end) sale_flag,
+  reg_price ,
+  reg_m_pack reg_multiple_pack,
+  reg_m_price reg_multiple_price,
+  sale_price ,
+  sale_m_pack sale_multiple_pack,
+  sale_m_price sale_multiple_price
+  from competitive_data, schedule, retail_calendar, item_lookup
+  where competitive_data.schedule_id = schedule.schedule_id
+  and schedule.schedule_id = ?
+  and schedule.start_date = retail_calendar.start_date
+  and retail_calendar.row_type = 'W'
+  and competitive_data.item_code = item_lookup.item_code
+  and ret_lir_id is null
+  )
+ </entry>
+ 
+ 
+ <entry key="competitiveDataStoreDateSQL">
+ Insert into	item_metric_summary_comp(item_metric_summary_comp_id, calendar_id,location_level_id,location_id,product_id,product_level_id,
+  sale_flag,reg_price,reg_multiple_pack,reg_multiple_price,sale_price,sale_multiple_pack,sale_multiple_price,  final_price)
+Select ITEM_METRIC_SUMMARY_COMP_SEQ.NextVal, calendar_id,location_level_id,location_id,product_id,product_level_id,
+  (case when sale_flag = 0 then 'N' else 'Y' end)sale_flag,reg_price,reg_multiple_pack,reg_multiple_price,sale_price,sale_multiple_pack,sale_multiple_price,(case
+  when
+  (sale_price = 0 )or (reg_price=0)
+  then
+  greatest(sale_price,reg_price)
+  else
+  least(sale_price,reg_price)
+  end) final_price
+ from 
+ (
+(SELECT avg(calendar_id)calendar_id,
+  5 location_level_id,
+    avg(location_id) location_id,
+  ret_lir_id as product_id,2 product_level_id, avg(s_flag) sale_flag, STATS_MODE(reg_price) reg_price, min(reg_multiple_pack) reg_multiple_pack,avg(reg_multiple_price) reg_multiple_price
+  ,STATS_MODE(sale_price) sale_price,min(sale_multiple_pack) sale_multiple_pack,avg(sale_multiple_price) sale_multiple_price  from
+(select calendar_id,
+  5 location_level_id,
+    schedule.comp_str_id location_id,
+  competitive_data.item_code as product_id,
+  ret_lir_id,
+  (case when sale_price > 0 then 1 else 0 end) s_flag,
+  reg_price ,
+  reg_m_pack reg_multiple_pack,
+  reg_m_price reg_multiple_price,
+  sale_price ,
+  sale_m_pack sale_multiple_pack,
+  sale_m_price sale_multiple_price
+  from competitive_data, schedule, retail_calendar, item_lookup
+  where competitive_data.schedule_id = schedule.schedule_id
+  and schedule.comp_str_id = ?
+  and schedule.start_date = retail_calendar.start_date
+  and retail_calendar.calendar_id = ?
+  and competitive_data.item_code = item_lookup.item_code
+  and ret_lir_id is not null
+  )
+  group by ret_lir_id
+)  
+  UNION
+  
+ select calendar_id,
+  5 location_level_id,
+    schedule.comp_str_id location_id,
+  competitive_data.item_code as product_id,
+  1 product_level_id,
+  (case when sale_price > 0 then 1 else 0 end) sale_flag,
+  reg_price ,
+  reg_m_pack reg_multiple_pack,
+  reg_m_price reg_multiple_price,
+  sale_price ,
+  sale_m_pack sale_multiple_pack,
+  sale_m_price sale_multiple_price
+  from competitive_data, schedule, retail_calendar, item_lookup
+  where competitive_data.schedule_id = schedule.schedule_id
+  and schedule.comp_str_id = ?
+  and schedule.start_date = retail_calendar.start_date
+  and retail_calendar.calendar_id = ?
+  and competitive_data.item_code = item_lookup.item_code
+  and ret_lir_id is null
+  )
+
+ </entry>
+ 
+
+<entry key="getSchedulesForCalendarSQL">
+select s.schedule_id from schedule s, retail_calendar rc, competitor_store cs
+where rc.calendar_id = ?
+and rc.row_type = 'W'
+and rc.start_date = s.start_date
+and s.comp_str_id = cs.comp_str_id
+and cs.comp_chain_id != ?
+</entry>
+
+<entry key="insertItemMetricSummaryWeeklyComp">
+insert into item_metric_summary_wk_comp (item_metric_swcomp_id, calendar_id, location_level_id, location_id, 
+product_level_id, product_id, sale_flag, reg_price, reg_m_pack, reg_m_price, sale_price, sale_m_pack, sale_m_price, final_price)
+select ITEM_METRIC_SWCOMP_SEQ.NEXTVAL, calendar_id, 5 location_level_id, schedule.comp_str_id location_id, 1 product_level_id,
+competitive_data.item_code as product_id, (case when sale_price > 0 then 'Y' else 'N' end) sale_flag,
+reg_price , reg_m_pack, reg_m_price, sale_price, sale_m_pack, sale_m_price, 
+(case when (sale_price > 0) then sale_price
+when (sale_m_price > 0) then sale_m_price/sale_m_pack
+when (reg_m_price > 0) then reg_m_price/reg_m_pack
+else reg_price end) final_price
+from competitive_data, schedule, retail_calendar
+where competitive_data.schedule_id = schedule.schedule_id
+and schedule.schedule_id = ?
+and schedule.start_date = retail_calendar.start_date
+and retail_calendar.row_type = 'W'
+</entry>
+
+ <entry key="OOSReportSQL">
+
+select comp_str_no,analysis_date, dept_name, cat_name, seg_name, TableA.retailer_item_code, item_desc, tod_desc, sale_flag,
+TableA.quantity,
+case
+when TableA.oos_method = 'last 7 days' then TableA.last_7day_exp
+when TableA.oos_method = 'last 28 days' then TableA.last_28day_exp
+when TableA.oos_method = 'last 120 days' then TableA.last_180day_exp
+when TableA.oos_method = 'last 42 days avg' then TableA.last_7day_avg_exp
+when TableA.oos_method = 'prev day' then TableA.prev_day_exp
+else 0
+end exp_used
+,TableA.oos_method,
+
+case when TableA.last_7day_obs >= 3 then TableA.last_7day_exp else null end last_7day_exp, 
+case when TableA.last_28day_obs >=7 then TableA.last_28day_exp else null end last_28day_exp, 
+case when TableA.last_180day_obs >=14 then TableA.last_180day_exp else null end last_180day_exp, 
+prev_day_exp,
+TableA.last_7day_avg_exp,
+TableA.last_7day_obs,TableA.last_7day_obs_used, TableA.last_7day_days_moved, 
+TableA.last_28day_obs,TableA.last_28day_obs_used,TableA.last_28day_days_moved,
+TableA.last_180day_obs,TableA.last_180day_obs_used,TableA.last_180day_days_moved,TableA.last_7day_avg_obs,
+TableA.oos_ind,
+TableA.unit_price, TableA.unit_reg_price,
+TableA.purchase_count
+,TableA.total_visit_count,
+
+MVD_TWO_PLUS_LAST_N_DAYS
+,ooscl
+
+, TableA.presto_item_code
+
+, ship.shipment_date, ship.quantity, ship.store_pack, ship.cases
+,mape,sigma_used,pred_model_exp
+, ad.retailer_item_code, ad.store_location,ad.item_description, ad.org_unit_ad_price, ad.org_ad_retail, ad.display_type, focus_item
+, ad_factor_exp, ad_factor_sigma, ad_factor_method, last_movement
+
+from 
+(select  sc.comp_str_id, cmp.comp_str_no comp_str_no,  sc.start_date + dow_id  -1 analysis_date,dep.name dept_name, cat.name cat_name, seg.name seg_name, 
+s.item_code presto_item_code, i.retailer_item_code retailer_item_code,item_name  || ' ' || item_size || ' ' || u.name  item_desc, 
+s.tod_id tod, t.tod_desc tod_desc, s.promotional_ind sale_flag,
+(s.quantity_sale + s.quantity_reg ) quantity,
+
+s.quantity_sale q1,s.quantity_reg q2,
+
+(case when s.promotional_ind = 'Y' then s.unit_sale_price else s.unit_reg_price  end) unit_price,
+s.unit_reg_price  unit_reg_price,
+s.visit_count purchase_count,
+
+s.total_visit_count total_visit_count,
+
+s.oos_ind oos_ind
+,MVD_TWO_PLUS_LAST_N_DAYS, oosl.name ooscl
+, s.oos_score, last_7day_exp,last_7day_obs,last_7day_obs_used,last_28day_exp,last_28day_obs,last_28day_obs_used,last_7day_avg_exp,last_7day_avg_obs,
+last_180day_exp,last_180day_obs,last_180day_obs_used,last_7day_days_moved,last_28day_days_moved, last_180day_days_moved,oos_method,
+
+prev_day_exp, mape, s.tod_id,sigma_used,pred_model_exp,focus_item
+, ad_factor_exp, ad_factor_sigma, ad_factor_method, last_movement
+from summary_daily_mov s, 
+schedule sc,
+retail_calendar rc,
+item_lookup i,
+
+time_of_day_lookup t,
+
+department dep, 
+
+category cat, 
+item_segment seg, 
+competitor_store cmp
+, oos_classification_lookup oosl
+, uom_lookup u
+where 
+rc.calendar_id = ?
+and sc.start_date = rc.start_date
+and s.schedule_id = sc.schedule_id
+and s.dow_id = ?
+and (oos_ind = 'Y' or oos_ind ='__OOS__')
+and s.item_code = i.item_code
+and s.tod_id = t.tod_id
+and i.dept_id = dep.id
+and i.category_id = cat.id
+and i.segment_id = seg.id
+and sc.comp_str_id = cmp.comp_str_id
+and cmp.comp_str_id = ?
+and s.oos_classification_id = oosl.id (+)
+and i.uom_id = u.id (+)
+order by s.item_code, s.tod_id
+) tableA
+,
+(Select store_id, shipment_date, item_code, quantity, store_pack, cases from shipping_info where 
+latest_ind = 'Y' and quantity >0
+) ship
+,
+
+
+(select retailer_item_code, store_location, item_description, org_unit_ad_price, org_ad_retail, display_type, presto_item_code from
+(select retailer_item_code, store_location, item_description, org_unit_ad_price, org_ad_retail, display_type, presto_item_code 
+from ad_info a  where a.calendar_id = ?
+union
+select retailer_item_code, store_location, item_description, org_unit_ad_price, org_ad_retail, display_type, item_code presto_item_code 
+from ad_info a, ad_info_item_list b 
+where a.ad_info_id = b.ad_info_id and a.calendar_id = ?
+)) ad
+
+
+where  tableA.presto_item_code = ship.item_code (+)
+and tableA.comp_str_id = ship.store_id (+)
+
+and tableA.presto_item_code = ad.presto_item_code (+)
+
+
+order by comp_str_no,dept_name,cat_name,seg_name,item_desc, tableA.tod_id
+
+
+</entry>
+
+
+
+<entry key="OOSReportConsolidatedSQL">
+
+select comp_str_no,analysis_date, dept_name, cat_name, seg_name, TableA.retailer_item_code, item_desc, tod_desc, sale_flag,
+TableA.quantity,
+case
+when TableA.oos_method = 'last 7 days' then TableA.last_7day_exp
+when TableA.oos_method = 'last 28 days' then TableA.last_28day_exp
+when TableA.oos_method = 'last 120 days' then TableA.last_180day_exp
+when TableA.oos_method = 'last 42 days avg' then TableA.last_7day_avg_exp
+when TableA.oos_method = 'prev day' then TableA.prev_day_exp
+else 0
+end exp_used
+,TableA.oos_method,
+
+case when TableA.last_7day_obs >= 3 then TableA.last_7day_exp else null end last_7day_exp, 
+case when TableA.last_28day_obs >=7 then TableA.last_28day_exp else null end last_28day_exp, 
+case when TableA.last_180day_obs >=14 then TableA.last_180day_exp else null end last_180day_exp, 
+prev_day_exp,
+TableA.last_7day_avg_exp,
+TableA.last_7day_obs,TableA.last_7day_days_moved, 
+TableA.last_28day_obs,TableA.last_28day_days_moved,
+TableA.last_180day_obs,TableA.last_180day_days_moved,TableA.last_7day_avg_obs,
+TableA.oos_ind,
+TableA.unit_price, TableA.unit_reg_price,
+TableA.purchase_count
+,TableA.total_visit_count,
+
+MVD_TWO_PLUS_LAST_N_DAYS
+,ooscl
+
+, TableA.presto_item_code
+
+, ship.shipment_date, ship.quantity
+,mape,sigma_used,pred_model_exp
+, ad.retailer_item_code, ad.store_location,ad.item_description, ad.org_unit_ad_price, ad.org_ad_retail, ad.display_type, focus_item
+
+
+from 
+(select  sc.comp_str_id, cmp.comp_str_no comp_str_no,  sc.start_date + dow_id  -1 analysis_date,dep.name dept_name, cat.name cat_name, seg.name seg_name, 
+s.item_code presto_item_code, i.retailer_item_code retailer_item_code,item_name  || ' ' || item_size || ' ' || u.name  item_desc, 
+s.tod_id tod, t.tod_desc tod_desc, s.promotional_ind sale_flag,
+(s.quantity_sale + s.quantity_reg ) quantity,
+
+s.quantity_sale q1,s.quantity_reg q2,
+
+(case when s.promotional_ind = 'Y' then s.unit_sale_price else s.unit_reg_price  end) unit_price,
+s.unit_reg_price  unit_reg_price,
+s.visit_count purchase_count,
+
+s.total_visit_count total_visit_count,
+
+s.oos_ind oos_ind
+,MVD_TWO_PLUS_LAST_N_DAYS, oosl.name ooscl
+, s.oos_score, last_7day_exp,last_7day_obs,last_28day_exp,last_28day_obs,last_7day_avg_exp,last_7day_avg_obs,
+last_180day_exp,last_180day_obs,last_7day_days_moved,last_28day_days_moved, last_180day_days_moved,oos_method,
+
+prev_day_exp, mape, s.tod_id,sigma_used,pred_model_exp,focus_item
+
+from summary_daily_mov s, 
+schedule sc,
+retail_calendar rc,
+item_lookup i,
+
+time_of_day_lookup t,
+
+department dep, 
+
+category cat, 
+item_segment seg, 
+competitor_store cmp
+, oos_classification_lookup oosl
+, uom_lookup u
+where 
+rc.calendar_id = ?
+and sc.start_date = rc.start_date
+and s.schedule_id = sc.schedule_id
+and s.dow_id = ?
+and oos_ind = 'Y'
+and s.item_code = i.item_code
+and s.tod_id = t.tod_id
+and i.dept_id = dep.id
+and i.category_id = cat.id
+and i.segment_id = seg.id
+and sc.comp_str_id = cmp.comp_str_id
+and cmp.comp_str_id IN STOREIDLIST_INCLAUSE
+and s.oos_classification_id = oosl.id (+)
+and i.uom_id = u.id (+)
+order by s.item_code, s.tod_id
+) tableA
+,
+(Select store_id, shipment_date, item_code, quantity from shipping_info where 
+latest_ind = 'Y' and quantity >0
+) ship
+,
+
+
+(select retailer_item_code, store_location, item_description, org_unit_ad_price, org_ad_retail, display_type, presto_item_code from
+(select retailer_item_code, store_location, item_description, org_unit_ad_price, org_ad_retail, display_type, presto_item_code 
+from ad_info a  where a.calendar_id = ?
+union
+select retailer_item_code, store_location, item_description, org_unit_ad_price, org_ad_retail, display_type, item_code presto_item_code 
+from ad_info a, ad_info_item_list b, retail_calendar rc, schedule ws 
+where a.ad_info_id = b.ad_info_id and a.calendar_id = ?
+)) ad
+
+
+where  tableA.presto_item_code = ship.item_code (+)
+and tableA.comp_str_id = ship.store_id (+)
+
+and tableA.presto_item_code = ad.presto_item_code (+)
+
+
+order by comp_str_no,dept_name,cat_name,seg_name,item_desc, tableA.tod_id
+
+
+</entry>
+
+
+
+<entry key="ItemListASQL">
+select item_code, upc, dept_id,item_name from item_lookup where item_code in(
+select item_id ITEM_CODE 
+from (select distinct item_id  
+from transaction_log m, item_lookup il, retail_calendar c 
+where m.item_id = il.item_code
+and m.calendar_id = c.calendar_id and  
+quantity > 0 and 
+store_id = __THE_STORE_ID__ and c.start_date __GE__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-__PAST_DAY_COUNT__ and c.start_date __LT__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy')
+and dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+) 
+</entry>
+
+
+<entry key="ItemListBSQLold">
+select item_code, upc, dept_id,item_name from item_lookup where item_code in(
+select item_id from(
+select count(calendar_id) cal_ct, item_id  from(
+select calendar_id, item_id, sum(quantity) mvt
+from (select item_id , calendar_id ,quantity
+from transaction_log m
+where
+calendar_id >= (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-__PAST_DAY_COUNT__ and row_type ='D')
+
+and store_id = __THE_STORE_ID__
+)
+where item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+and calendar_id in (select calendar_id from retail_calendar where start_date __GE__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-__PAST_DAY_COUNT__ and start_date __LT__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+group by calendar_id, item_id
+) where mvt >=2
+group by item_id
+) where cal_ct =7 
+)
+</entry>
+
+<entry key="ItemListCSQL">
+select item_code, upc, dept_id, item_name from item_lookup where item_code in (
+	select distinct item_id from
+		(select item_id from(
+			select count(calendar_id) cal_ct, item_id  from(
+				select calendar_id, item_id, sum(quantity) mvt	from 
+				(select item_id , calendar_id ,quantity
+				from transaction_log m
+				where
+				calendar_id __GE__ (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 and row_type ='D')
+				and store_id = __THE_STORE_ID__
+				)
+				where item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+				and calendar_id in 
+					(select calendar_id from retail_calendar 
+					where start_date __GE__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 and start_date __LT__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+				group by calendar_id, item_id
+			) where mvt __GE__ 3
+				group by item_id
+			) where cal_ct __GE__ 25 
+		union 
+		select distinct  presto_item_code item_id from ad_info_view 
+			where calendar_id in (__CAL_ID_1__,__CAL_ID_2__,__CAL_ID_3__,__CAL_ID_4__)
+		) where active_indicator = 'Y'
+) and upc not like 'L%'
+</entry>
+
+<entry key="ItemListBSQL">
+select upc , round(average,2) avg_daily_movement from(
+
+select upc,item_code, average from item_lookup il,
+(select * from
+(
+select count(calendar_id) days_moved, item_id, sum(mvt)/28 average 
+from(
+  select calendar_id, item_id, sum(quantity) mvt
+    from (
+      select item_id , calendar_id ,quantity
+        from transaction_log m
+        where
+          calendar_id  __GE__  (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 and row_type ='D')
+          and store_id =  __THE_STORE_ID__ 
+    )
+    where 
+      item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+      and calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+    group by calendar_id, item_id
+) where mvt  __GE__ 3
+group by item_id
+)  
+where days_moved  __GE__  25 
+
+
+union 
+
+select count(calendar_id) days_moved, item_id, sum(mvt)/28 average  from(
+select calendar_id, item_id, sum(quantity) mvt
+from (
+select item_id , calendar_id ,quantity
+from transaction_log m
+where
+calendar_id  __GE__  (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 and row_type ='D')
+and store_id =  __THE_STORE_ID__
+)
+where 
+item_id in (select distinct  presto_item_code item_id from ad_info_view where calendar_id in (__CAL_ID_1__))
+and calendar_id in (select calendar_id from retail_calendar where start_date  >=  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 
+and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+group by calendar_id, item_id
+) group by item_id
+) tabA
+where il.item_code = tabA.item_id  and active_indicator ='Y'
+) order by average desc
+</entry>
+
+
+<entry key="ItemListDSQL">
+select upc  from(
+
+select upc from item_lookup il,
+(select * from
+(
+select count(calendar_id) days_moved, item_id, sum(mvt)/28 average 
+from(
+  select calendar_id, item_id, sum(quantity) mvt
+    from (
+      select item_id , calendar_id ,quantity
+        from transaction_log m
+        where
+          calendar_id  __GE__  (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 and row_type ='D')
+          and store_id =  __THE_STORE_ID__ 
+    )
+    where 
+      item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+      and calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+    group by calendar_id, item_id
+) where mvt  __GE__ 1
+group by item_id
+)  
+where days_moved  __GE__  25 
+
+) tabA
+
+where il.item_code = tabA.item_id  and active_indicator ='Y' and upc not like 'L%'
+
+union
+
+select upc from item_lookup ilook where upc not like 'L%' and ret_lir_id in
+(select ret_lir_id from item_lookup il,
+(select * from
+(
+select count(calendar_id) days_moved, item_id, sum(mvt)/28 average 
+from(
+  select calendar_id, item_id, sum(quantity) mvt
+    from (
+      select item_id , calendar_id ,quantity
+        from transaction_log m
+        where
+          calendar_id  __GE__  (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 and row_type ='D')
+          and store_id =  __THE_STORE_ID__ 
+    )
+    where 
+      item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+      and calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+    group by calendar_id, item_id
+) where mvt  __GE__ 1
+group by item_id
+)  
+where days_moved  __GE__  25 
+
+) tabA
+
+where il.item_code = tabA.item_id  and active_indicator ='Y' and upc not like 'L%'
+)
+
+
+
+
+) 
+</entry>
+
+
+<entry key="weeklyAdSQL">
+select presto_item_code, display_type from
+
+(select calendar_id, page, block, a.retailer_item_code, presto_item_code, ad_location, reg_price, on_tpr, org_unit_ad_price, org_ad_retail, 
+display_type from ad_info a
+
+union
+
+select a.calendar_id,page, block, a.retailer_item_code, b.item_code presto_item_code, ad_location, reg_price, on_tpr, org_unit_ad_price, org_ad_retail, 
+display_type 
+from ad_info a, ad_info_item_list b  where a.ad_info_id = b.ad_info_id
+) adinfo, retail_calendar rc, item_lookup i
+where adinfo.calendar_id = rc.calendar_id and
+adinfo.presto_item_code = i.item_code
+and adinfo.calendar_id = __WEEKLY_CAL_ID__
+
+</entry>
+
+
+<entry key="lastMovementSQL">
+select item_id , to_char(last_mov,'MM/DD/YYYY HH:MI AM') from
+(select item_id, max(trx_time) last_mov
+from (select item_id , calendar_id ,quantity, trx_time
+from transaction_log m
+where
+calendar_id __GE__ (select calendar_id from retail_calendar where start_date = to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-15 and row_type ='D')
+and quantity __GE__ 1
+and store_id = __THE_STORE_ID__
+)
+where
+item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) and active_indicator = 'Y')
+and calendar_id in (select calendar_id from retail_calendar where start_date __GE__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-15 
+and start_date __LT__ to_date('__ANALYSIS_DATE__','MM/dd/yyyy')+1 and row_type ='D')		 
+group by item_id)
+
+
+</entry>
+
+
+<entry key="tLogExtractSQL">
+select A.store_id comp_str_no, C.upc, to_char( A.trx_time, 'MM-DD-YY hh24:mi') as tran_time, A.SALE_TYPE SALE_FLAG, 
+A.QUANTITY, A.WEIGHT, A.net_amt NET_PRICE, 
+A.trx_no TRANSACTION_NO, A.ITEM_id as PRESTO_ITEM_CODE, A.regular_amt EXTENDED_GROSS_PRICE , A.STORE_COUPON_USED , A.MFR_COUPON_USED, 
+C.SEGMENT_ID 
+from transaction_log A, RETAIL_CALENDAR B, ITEM_LOOKUP C 
+where A.store_id in (__STORE_LIST__) 
+and A.item_id in ( 
+select item_code 
+from item_lookup   
+
+where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) 
+
+and active_indicator = 'Y') 
+and B.calendar_id = A.calendar_id 
+and B.start_date __GE__ to_date('__BEGIN_DATE__','MM/dd/yyyy')
+and B.start_date __LT__ to_date('__END_DATE__','MM/dd/yyyy')+1
+and B.ROW_TYPE = 'D' 
+and C.item_code = A.item_id 
+order by store_id, trx_time
+</entry>
+
+
+
+<entry key="itemListforSubstituteSQL">
+select il.ret_lir_id, ret_lir_name,item_code, item_name, cat_name, sub_category_id, sub_cat_name, segment_name, segment_id, uom_name uom_nm, item_size it_size, pr from item_lookup_view il,
+(select item_id, pr from
+(
+select count(calendar_id) days_moved, item_id, avg(price) pr
+from(
+  select calendar_id, item_id, sum(quantity) mvt, avg(unit_price) price
+    from (
+      select item_id , calendar_id ,quantity, unit_price
+        from transaction_log t 
+      where calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')
+          and store_id =  __THE_STORE_ID__ 
+          and item_id in (select item_code from item_lookup where dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33)  
+          and active_indicator = 'Y' and ret_lir_id is null)
+    )group by calendar_id, item_id
+) where mvt  __GE__ 1
+group by item_id
+)  
+where days_moved  __GE__  20 
+) A 
+where il.item_code = A.item_id 
+  
+</entry>
+
+<entry key="itemListforSubstituteSQL2">
+select il.ret_lir_id, ret_lir_name,item_code, item_name, cat_name, sub_category_id, sub_cat_name, segment_name, segment_id, uom_name uom_nm, item_size it_size, pr from item_lookup_view il,
+(select item_id, pr from
+(
+select count(calendar_id) days_moved, item_id, avg(price) pr
+from(
+  select calendar_id, item_id, sum(quantity) mvt, avg(unit_price) price
+    from (
+      select item_id , t.calendar_id wcal_id ,quantity, unit_price, rc.calendar_id 
+        from (select tl.* from transaction_log tl inner join item_lookup il on tl.item_id = il.item_code where sub_category_id = 2689) t, retail_calendar rc
+      where t.calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-42 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')
+          and store_id =  __THE_STORE_ID__ 
+          and t.trx_time __GE__ rc.start_date and t.trx_time __LT__= rc.end_date and rc.row_type='W'
+    )group by calendar_id, item_id
+) where mvt  __GE__ 2
+group by item_id
+)  
+where days_moved  __GE__  6 
+) A 
+where il.item_code = A.item_id 
+and il.active_indicator='Y' and ret_lir_id is null  
+</entry>
+
+
+
+<entry key="lirListforSubstituteSQL">
+select ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name, segment_id,segment_name,  uom_nm, it_size,price pr from 
+(select ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name,  segment_id,segment_name,  count(calendar_id) cc,  wm_concat(distinct uom) uom_nm, wm_concat(distinct isize) it_size, avg(pr) price from 
+(select * from 
+(select ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name, segment_id,segment_name, calendar_id, count(trx_no) tcount , wm_concat(distinct uom_name) uom,
+ wm_concat(distinct item_size) isize, avg(unit_price) pr
+from transaction_log t, item_lookup_view i  where t.item_id = i.item_code 
+    and calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-28 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+       and store_id = __THE_STORE_ID__ and ret_lir_id is not null
+       and dept_id In (22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33) 
+group by ret_lir_id,ret_lir_name,cat_name,  sub_category_id, sub_cat_name, segment_id,segment_name, calendar_id)
+where tcount __GE__1)
+group by ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name, segment_id,segment_name)
+where cc __GE__20
+order by ret_lir_id
+
+</entry>
+
+<entry key="lirListforSubstituteSQL2">
+select ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name, segment_id,segment_name,  uom_nm, it_size,price pr from 
+(select ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name,  segment_id,segment_name,  count(calendar_id) cc,  wm_concat(distinct uom) uom_nm, wm_concat(distinct isize) it_size, avg(pr) price from 
+(select * from 
+(select ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name, segment_id,segment_name, rc.calendar_id, count(trx_no) tcount , wm_concat(distinct uom_name) uom,
+ wm_concat(distinct item_size) isize, avg(unit_price) pr
+from (select tl.* from transaction_log tl inner join item_lookup il on tl.item_id = il.item_code where sub_category_id = 2689) t, item_lookup_view i, retail_calendar rc where t.item_id = i.item_code 
+    and t.calendar_id in (select calendar_id from retail_calendar where start_date  __GE__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy')-42 
+      and start_date  __LT__  to_date('__ANALYSIS_DATE__','MM/dd/yyyy') and row_type ='D')		 
+       and store_id = __THE_STORE_ID__ and ret_lir_id is not null
+       and t.trx_time __GE__ rc.start_date and t.trx_time __LT__= rc.end_date and rc.row_type='W'
+group by ret_lir_id,ret_lir_name,cat_name,  sub_category_id, sub_cat_name, segment_id,segment_name, rc.calendar_id)
+where tcount __GE__2)
+group by ret_lir_id,ret_lir_name,cat_name, sub_category_id, sub_cat_name, segment_id,segment_name)
+where cc __GE__6
+order by ret_lir_id
+
+</entry>
+
+
+
+<entry key="adExtractSQL">
+select to_char(start_date,'YYYY-MM-DD') week_start_date, to_char(end_date,'YYYY-MM-DD') week_end_date,page, block, adinfo.retailer_item_code, presto_item_code, i.item_name,ad_location, 
+reg_price, on_tpr, org_unit_ad_price, org_ad_retail, 
+display_type,upc from
+
+(select calendar_id, page, block, a.retailer_item_code, presto_item_code, ad_location, reg_price, on_tpr, org_unit_ad_price, org_ad_retail, 
+display_type from ad_info a
+
+union
+
+select a.calendar_id,page, block, a.retailer_item_code, b.item_code presto_item_code, ad_location, reg_price, on_tpr, org_unit_ad_price, org_ad_retail, 
+display_type 
+from ad_info a, ad_info_item_list b  where a.ad_info_id = b.ad_info_id
+) adinfo, retail_calendar rc, item_lookup i
+where adinfo.calendar_id = rc.calendar_id and
+adinfo.presto_item_code = i.item_code
+and adinfo.calendar_id = __WEEK_ID__
+and UPC not like 'L%'
+order by adinfo.calendar_id 
+
+</entry>
+
+
+<entry key="itemListforSubstituteSQLdebug">
+select item_code, item_name, cat_name, segment_name from item_lookup_view where item_code = 19549 or item_code = 19643 or item_code = 14908  
+</entry>
+
+<entry key="dept list">
+22, 23,15,35,36,32,19,14,16,17,26,28,18,29,33
+</entry>
+
+</properties>
