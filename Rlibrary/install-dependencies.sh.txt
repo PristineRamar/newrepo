@@ -1,0 +1,61 @@
+#install R version 4.0.3
+
+cd /usr/local/src 
+sudo wget https://cran.rstudio.com/src/base/R-4/R-4.0.3.tar.gz 
+sudo su 
+tar zxvf R-4.0.3.tar.gz 
+cd R-4.0.3 ./configure --enable-R-shlib 
+make
+make install  
+cd .. rm -rf R-4.0.3* 
+exit ‎‎
+cd
+
+#R Installation ends
+
+#Install dependent linux packages
+
+sudo apt update 
+sudo apt ugrade
+sudo apt-get install -y g++ gfortran libreadline6-dev libx11-dev libxt-dev libpng-dev libjpeg-dev libcairo2-dev xvfb libbz2-dev libzstd-dev liblzma-dev libcurl4-openssl-dev texinfo texlive texlive-fonts-extra screen wget libpcre2-dev zlib1g-dev libbz2-dev liblzma-dev libpcre2-dev libcurl4-openssl-dev openjdk-11-jdk make
+
+sudo apt-get ugrade
+sudo apt install build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev
+suto apt-get update
+
+#install oracle client
+
+sudo curl -o oracle-instantclient-basic-21.7.0.0.0-1.el8.x86_64.rpm https://download.oracle.com/otn_software/linux/instantclient/217000/oracle-instantclient-basic-21.7.0.0.0-1.el8.x86_64.rpm -y
+# Install additional SDK tools for installing ROracle (it requires rdbms/public and oci.h files)
+
+sudo curl -o oracle-instantclient-devel-21.7.0.0.0-1.x86_64.rpm https://download.oracle.com/otn_software/linux/instantclient/217000/oracle-instantclient-devel-21.7.0.0.0-1.x86_64.rpm -y
+
+sudo apt install -y alien libaio1
+sudo alien -i oracle-instantclient-basic-21.7.0.0.0-1.el8.x86_64.rpm
+sudo alien -i oracle-instantclient-devel-21.7.0.0.0-1.x86_64.rpm
+
+DIRECTORY=/usr/lib/oracle/21/client64/lib
+if [ -d "$DIRECTORY" ]; then
+  echo "$DIRECTORY does exist."
+else
+  echo "$DIRECTORY does not exist."
+fi
+
+# Set environment variables for Oracle client
+export LD_LIBRARY_PATH=/usr/lib/oracle/21/client64/lib
+export ORACLE_HOME=/usr/lib/oracle/21/client64
+
+# Install essential tools such as JDK and other packages for installing R libraries
+sudo apt-get install -y default-jre
+sudo apt-get install -y default-jdk
+sudo apt install -y cmake
+sudo apt install -y libudunits2-dev
+sudo apt install -y libfontconfig1-dev
+sudo apt install -y libxml2-dev
+sudo apt install -y libharfbuzz-dev libfribidi-dev
+sudo apt install -y libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
+
+#Install R libraries
+R CMD install-r-libraries.R
+
